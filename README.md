@@ -1,156 +1,160 @@
-# AI-Driven SOC Automation with Safe LLM Orchestration
+# AI SOC Automation Platform (FastAPI + Redis + Docker Sandbox + Ollama + React)
 
-## Project Vision
-Build an end-to-end, explainable, and safety-first cybersecurity orchestration platform that uses LLM reasoning to reduce SOC alert fatigue while preserving operational trust through policy validation and sandboxed execution.
+Production-style, modular SOC automation stack with explainability and safe execution controls.
 
----
+## Architecture
 
-## Scope
+- **Backend:** FastAPI micro-modules for detection, LLM reasoning, command policy validation (ATAVE), Docker sandbox execution, and audit logging.
+- **Orchestration:** **Redis only** for queueing, pub/sub, and incident state.
+- **LLM:** Local **Ollama** serving **Mistral 7B**.
+- **Sandbox Mitigation:** `docker run --network none --cap-drop ALL` per command.
+- **Frontend:** React/Vite analyst dashboard with explainability and audit monitoring.
 
-- **AI-Driven Alert Understanding**
-  - Use LLMs to interpret, classify, and summarize alerts from SIEM, IDS/IPS, and network monitoring systems.
-- **Dynamic and Adaptive Response Generation**
-  - Generate AI playbooks that adapt to unknown, evolving, and multi-stage attacks.
-- **Safe Cybersecurity Automation (ATAVE)**
-  - Validate AI-recommended actions for safety, correctness, and policy compliance before execution.
-- **Secure Testing Environment**
-  - Execute validated actions in isolated sandboxes to prevent production impact.
-- **Unified Explainability Interface**
-  - Provide reasoning chains, validation outcomes, threat correlations, and confidence metrics.
-- **Extensibility & Deployment Readiness**
-  - Support integration with enterprise SOC tooling and expansion into cloud, endpoint, and multi-agent environments.
+## Backend Modules
 
----
+1. `backend/detector.py`
+2. `backend/redis_client.py`
+3. `backend/llm_engine.py`
+4. `backend/mitigation_generator.py`
+5. `backend/command_verifier.py`
+6. `backend/atave_validator.py`
+7. `backend/sandbox_executor.py`
+8. `backend/audit_logger.py`
+9. `backend/pipeline_orchestrator.py`
+10. `backend/main_api.py`
 
-## Objectives
+## Frontend Modules
 
-1. **Develop an Intelligent LLM-Based Alert Interpretation System**
-   - Context-aware alert analysis and triage to reduce analyst workload.
-2. **Design a Dynamic Adaptive Orchestration Framework**
-   - Playbook generation that reacts to zero-day and multi-stage attack behavior.
-3. **Implement ATAVE for Safe Verified Automation**
-   - Block hallucinated, unsafe, or policy-violating actions.
-4. **Build a Sandboxed Execution Module**
-   - Test mitigation commands in isolation before production rollout.
-5. **Develop an Explainable Threat Correlation Dashboard**
-   - Display alert origin, reasoning chain, severity, confidence, and outcomes.
+1. `frontend/src/components/AnalystDashboard.jsx`
+2. `frontend/src/components/IncidentPanel.jsx`
+3. `frontend/src/components/ExplainabilityPanel.jsx`
+4. `frontend/src/components/MitigationPanel.jsx`
+5. `frontend/src/components/RiskScoreChart.jsx`
+6. `frontend/src/components/AuditLogsViewer.jsx`
 
----
+## Security Features
 
-## Methodology
+- Command whitelist enforcement via `CommandVerifier.WHITELIST_PREFIXES`.
+- Unsafe command rejection via `CommandVerifier.UNSAFE_KEYWORDS`.
+- Sandbox isolation logging in `sandbox_executor.py` under `sandbox_isolation` field.
 
-### Phase 1: Requirement Analysis & Problem Understanding
-- Study SOC workflows, alert patterns, and incident response.
-- Analyze SOAR and AI security tool limitations.
-- Define requirements for classification, enrichment, reasoning, and safe automation.
-- Collect benchmark and operational datasets (CICIDS2017, UNSW-NB15, Suricata, Zeek, Syslog).
+## Explainability Features
 
-### Phase 2: System Architecture & Design
-- Design modular components for LLM reasoning, RAG, ATAVE, and sandbox execution.
-- Define interaction diagrams and communication pathways.
-- Establish storage for vectors, logs, and metadata.
-- Finalize stack: Python, LLaMA/Mistral, Docker, Streamlit/React, Redis/RabbitMQ.
-
-### Phase 3: Data Preprocessing & Alert Normalization
-- Convert heterogeneous logs into a unified JSON schema.
-- Enrich with GeoIP, DNS resolution, and normalized timestamps.
-- Remove noise and duplicates.
-- Tag alerts with severity and contextual metadata.
-
-### Phase 4: LLM Reasoning Core
-- Apply prompt engineering for interpretation, ATT&CK mapping, and classification.
-- Produce decisions: **Approve / Reject / Modify / Human Review**.
-- Configure lightweight open-source LLMs for cybersecurity tasks.
-- Generate summaries, attacker intent, and initial mitigations.
-- Add reasoning control to reduce hallucinations.
-
-### Phase 5: RAG Context Engine
-- Build embedding + vector retrieval pipeline.
-- Curate corpus: MITRE ATT&CK, CVEs, policies, and research.
-- Ground LLM responses with retrieved evidence.
-- Compare baseline LLM vs LLM+RAG performance.
-
-### Phase 6: ATAVE (Adaptive Threat-Action Validation Engine)
-- Combine policy rules, risk scoring, and similarity checks.
-- Evaluate every generated action for safety and compliance.
-- Stop unsafe/high-risk actions from execution.
-
-### Phase 7: Sandboxed Execution & Testing
-- Build Docker-isolated simulation for hosts/network controls.
-- Execute only validated actions.
-- Capture telemetry and behavioral impact.
-- Validate correctness across diverse attack scenarios.
-
-### Phase 8: Explainability Dashboard
-- Show:
-  - LLM reasoning chain
-  - RAG evidence
-  - ATAVE verdict
-  - Attack timeline and impact
-  - Sandbox execution outcomes
-- Improve analyst trust, speed, and transparency.
-
-### Phase 9: Evaluation, Testing & Documentation
-- Measure accuracy, precision, recall, and risk/error reduction.
-- Benchmark against traditional SOAR workflows.
-- Document architecture, algorithms, and findings.
-- Prepare demo, presentation, and final technical report deliverables.
+- LLM reasoning display (`llm_reasoning`).
+- MITRE ATT&CK mapping (`mitre_attack_mapping`).
+- Confidence score (`confidence_score`).
+- Risk severity indicator (`risk_severity`).
 
 ---
 
-## Architecture (Core Components)
+## Installation Steps (Local Dev)
 
-1. **Alert Ingestion & Preprocessing Layer**
-   - Collect Suricata, Zeek, Syslog, and open dataset logs.
-   - Normalize, enrich, deduplicate, and output standardized JSON.
+### 1) Prerequisites
 
-2. **LLM Reasoning Core**
-   - Contextual interpretation and ATT&CK technique mapping.
-   - Summarization and initial mitigation suggestions.
+- Docker + Docker Compose
+- Python 3.11+
+- Node.js 20+
+- Ollama installed locally (if not using compose service)
 
-3. **RAG Context Engine**
-   - Retrieve MITRE/CVE/policy context through vector search.
-   - Ground LLM decisions in verifiable evidence.
+### 2) Backend install
 
-4. **ATAVE Validation Engine**
-   - Rule + risk model checks for action safety and relevance.
-   - Output action verdict: Approve, Reject, Modify, Human Review.
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-5. **Sandboxed Execution Environment**
-   - Run validated actions in isolated Docker infrastructure.
-   - Record response impact and side effects safely.
+### 3) Frontend install
 
-6. **Orchestration Layer (Redis / RabbitMQ)**
-   - Async event routing and workflow coordination.
-   - Reliable queueing and system scalability.
+```bash
+cd frontend
+npm install
+```
 
-7. **Persistence Layer**
-   - Store logs, embeddings, validation records, and audit trails.
+### 4) Redis setup
 
-8. **Explainability & Analyst Dashboard**
-   - Unified view of reasoning, confidence, verdicts, and execution outcomes.
+Option A: Docker
+
+```bash
+docker run --name soc-redis -p 6379:6379 -d redis:7-alpine
+```
+
+Option B: Use compose (recommended below).
+
+### 5) Ollama setup (Mistral 7B)
+
+```bash
+ollama serve
+ollama pull mistral:7b
+```
+
+If using compose Ollama container:
+
+```bash
+docker compose up -d ollama
+docker exec -it $(docker ps -qf name=ollama) ollama pull mistral:7b
+```
 
 ---
 
-## Expected Outcomes
+## Run Instructions (Without Compose)
 
-1. **SOC Alert Overload Reduction**
-   - Automate triage; target substantial manual workload reduction.
-2. **Higher Detection & Classification Accuracy**
-   - Improve quality of threat mapping and prioritization with LLM+RAG.
-3. **Safe and Trustworthy Automation**
-   - Ensure validated, policy-compliant actions before execution.
-4. **Secure Mitigation Testing**
-   - Prevent business disruption through isolated validation runs.
-5. **Transparent Incident Response**
-   - Improve analyst decision quality using explainability outputs.
-6. **End-to-End Autonomous Pipeline**
-   - Ingestion → reasoning → retrieval → validation → sandbox execution.
-7. **Scalable Modular Foundation**
-   - Enable future expansion to cloud/endpoint/multi-agent security.
-8. **Practical Demonstration Readiness**
-   - Working prototype suitable for technical review and evaluation.
-9. **Research & Education Contribution**
-   - Real-world testbed for safe LLM-driven cybersecurity automation.
-10. **Path to SOC Adoption**
-    - Addresses alert fatigue, response latency, and staffing constraints.
+### Backend
+
+```bash
+cd backend
+export REDIS_URL=redis://localhost:6379/0
+export OLLAMA_URL=http://localhost:11434
+export OLLAMA_MODEL=mistral:7b
+uvicorn main_api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### Frontend
+
+```bash
+cd frontend
+export VITE_API_URL=http://localhost:8000
+npm run dev -- --host 0.0.0.0 --port 5173
+```
+
+Open: `http://localhost:5173`
+
+---
+
+## Docker Setup (Full Stack)
+
+1. Pull/start stack:
+
+```bash
+docker compose up -d --build
+```
+
+2. Pull model in Ollama service:
+
+```bash
+docker exec -it $(docker ps -qf name=ollama) ollama pull mistral:7b
+```
+
+3. Access services:
+
+- Frontend: `http://localhost:5173`
+- Backend API docs: `http://localhost:8000/docs`
+- Redis: `localhost:6379`
+- Ollama API: `http://localhost:11434`
+
+---
+
+## API Quick Test
+
+```bash
+curl -X POST http://localhost:8000/api/incidents/process \
+  -H "Content-Type: application/json" \
+  -d '{"id":"inc-1001","source":"suricata","event":"failed login bruteforce from 10.2.2.5","metadata":{"src_ip":"10.2.2.5"}}'
+```
+
+## Audit Log Output
+
+- JSONL file: `backend/data/audit_logs.jsonl`
+- API endpoint: `GET /api/audit-logs?limit=50`
+
