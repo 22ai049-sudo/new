@@ -1,0 +1,186 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #e5e7eb;
+  background: #030712;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.12), transparent 40%),
+    radial-gradient(circle at 90% 0%, rgba(168, 85, 247, 0.14), transparent 45%),
+    #030712;
+}
+
+.dashboard-root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.dashboard-header h1 { margin: 0 0 6px; font-size: 1.8rem; }
+.dashboard-header p { margin: 0; color: #9ca3af; }
+
+.header-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.badge {
+  border: 1px solid #374151;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: rgba(17, 24, 39, 0.85);
+  font-size: 0.84rem;
+}
+
+.panel {
+  background: rgba(17, 24, 39, 0.88);
+  border: 1px solid #263244;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+.panel h3 { margin-top: 0; }
+
+.grid-2 {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.muted { color: #9ca3af; }
+.label { color: #93c5fd; font-weight: 600; margin-right: 8px; }
+
+.editor {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  background: #0b1220;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px;
+}
+.editor:focus { outline: 2px solid #2563eb; }
+
+.actions-row { display: flex; gap: 10px; margin-top: 10px; }
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.primary-btn {
+  background: linear-gradient(90deg, #2563eb, #0ea5e9);
+  color: white;
+}
+.secondary-btn {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+}
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.error-text { color: #fca5a5; margin-top: 10px; }
+
+.kv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.kv-grid > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #2a3a4f;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.severity-chip {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.sev-critical { background: rgba(239, 68, 68, 0.22); color: #fca5a5; }
+.sev-high { background: rgba(248, 113, 113, 0.2); color: #fda4af; }
+.sev-medium { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.sev-low { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid #334155;
+  background: #0b1220;
+  font-size: 0.8rem;
+}
+
+.risk-wrap { margin-top: 6px; }
+.risk-bar {
+  width: 100%;
+  height: 14px;
+  background: #1f2937;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.risk-fill { height: 14px; transition: width 250ms ease; }
+.risk-meta { margin-top: 8px; display: flex; justify-content: space-between; }
+
+.cmd-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.cmd-list {
+  margin: 0;
+  padding-left: 18px;
+}
+.cmd-list li { margin-bottom: 8px; }
+
+.log-container {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #263244;
+  border-radius: 10px;
+  padding: 10px;
+  background: #0b1220;
+}
+.log-item {
+  border: 1px solid #223047;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.log-item pre {
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+  color: #cbd5e1;
+}
+.log-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+@media (max-width: 920px) {
+  .grid-2, .cmd-columns, .kv-grid { grid-template-columns: 1fr; }
+  .dashboard-header { flex-direction: column; }
+}
+
+.top-gap { margin-top: 12px; }
+.status-active { color: #86efac; font-weight: 700; }
+.status-degraded { color: #fbbf24; font-weight: 700; }
+.status-disabled { color: #9ca3af; font-weight: 700; }
